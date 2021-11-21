@@ -1,115 +1,351 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_travel_app/constants/theme.dart';
+import 'package:flutter_travel_app/models/destination.dart';
+import 'package:flutter_travel_app/pages/detail.dart';
+import 'package:flutter_travel_app/utils/fade_animation.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(MaterialApp(
+    routes: {'/': (context) => MyApp(), '/detail': (context) => DetailPage()},
+    debugShowCheckedModeBanner: false));
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final List<Destination> recommendList = [
+    Destination(
+        name: 'Wilson Island Tour',
+        imageUrl: 'assets/images/wilson.png',
+        location: 'Maldives, Asia',
+        rating: 4.9),
+    Destination(
+        name: 'St. Lucia Island',
+        imageUrl: 'assets/images/lucia.png',
+        location: 'Saint Lucia',
+        rating: 4.9)
+  ];
+
+  final List<Destination> packages = [
+    Destination(
+        name: 'Alesund viewpoint package',
+        imageUrl: 'assets/images/alesund.png',
+        location: 'Norway'),
+    Destination(
+        name: 'Manarola viewpoint package',
+        imageUrl: 'assets/images/manarola.png',
+        location: 'La Spezia, Italy'),
+    Destination(
+        name: 'Heceta head viewpoint package',
+        imageUrl: 'assets/images/heceta.png',
+        location: 'Florence, USA'),
+  ];
+
+  Widget recommendCard(int index, int listLength, Destination dest) {
+    return FadeAnimation(
+      delay: 400 * (index + 1),
+      isHorizontal: true,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, '/detail');
+        },
+        child: Container(
+            margin: EdgeInsets.only(
+                top: mdSpacing,
+                bottom: mdSpacing,
+                left: index == 0 ? margin : 0,
+                right: index == listLength - 1 ? margin : 16),
+            width: 240,
+            decoration: BoxDecoration(
+                color: bgElevated,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.blueGrey.withOpacity(0.1),
+                      offset: Offset(4, 4),
+                      blurRadius: 8,
+                      spreadRadius: 0)
+                ]),
+            child: Column(
+              children: [
+                Expanded(
+                    child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                      image: DecorationImage(
+                          image: AssetImage(dest.imageUrl!), fit: BoxFit.cover)),
+                )),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(dest.name!, style: lgTextStyle.copyWith(fontSize: 14)),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.asset('assets/icons/location.png', width: 12),
+                              SizedBox(
+                                width: smSpacing,
+                              ),
+                              Text(dest.location!,
+                                  style: smTextStyle.copyWith(color: tertaryColor))
+                            ],
+                          )
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/icons/start.png',
+                            width: 12,
+                          ),
+                          SizedBox(
+                            width: smSpacing,
+                          ),
+                          Text('${dest.rating}',
+                              style: smTextStyle.copyWith(color: tertaryColor))
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      backgroundColor: bgPrimary,
+      appBar: appBar(),
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Container(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: spacing,
+              ),
+              hero(),
+              SizedBox(
+                height: spacing,
+              ),
+              Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: margin),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text('Recommended', style: lgTextStyle.copyWith(color: primaryColor)),
+                        Text('View All', style: smTextStyle.copyWith(color: accentColor))
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: smSpacing,
+                  ),
+                  Container(
+                    height: 320,
+                    child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: recommendList.length,
+                      itemBuilder: (context, index) {
+                        return recommendCard(
+                            index, recommendList.length, recommendList[index]);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: spacing,
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: margin),
+                child: Column(children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('Popular Packages',
+                          style: lgTextStyle.copyWith(color: primaryColor)),
+                      Text('View All', style: smTextStyle.copyWith(color: accentColor))
+                    ],
+                  ),
+                  SizedBox(
+                    height: smSpacing,
+                  ),
+                  FadeAnimation(delay: 1000, child: packageCard(packages[0])),
+                  FadeAnimation(delay: 1200, child: packageCard(packages[1])),
+                  FadeAnimation(delay: 1400, child: packageCard(packages[2])),
+                ]),
+              ),
+              SizedBox(
+                height: spacing,
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+PreferredSize appBar() {
+  return PreferredSize(
+    preferredSize: Size(double.infinity, 72),
+    child: Container(
+      padding: EdgeInsets.symmetric(horizontal: margin),
+      color: bgSecondary,
+      child: SafeArea(
+        left: false,
+        right: false,
+        child: Align(
+          alignment: Alignment.center,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Image.asset(
+                'assets/icons/menu.png',
+                width: 30,
+                height: 30,
+              ),
+              Container(
+                height: 44,
+                width: 44,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/profile.png'), fit: BoxFit.cover)),
+              )
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget hero() {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: margin),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Hello Jessica',
+          style: xlTextStyle.copyWith(color: primaryColor),
+        ),
+        SizedBox(
+          height: smSpacing,
+        ),
+        Text('Let’s discover best package for you.',
+            style: baseTextStyle.copyWith(color: secondaryColor)),
+        SizedBox(height: spacing),
+        FadeAnimation(
+          delay: 400,
+          child: Row(
+            children: [
+              Expanded(
+                  child: Container(
+                height: 54,
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                    color: bgSecondary, borderRadius: BorderRadius.circular(12)),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: TextField(
+                    style: baseTextStyle.copyWith(color: primaryColor),
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        isCollapsed: true,
+                        isDense: true,
+                        hintText: 'Search for your favorite place here',
+                        hintStyle: baseTextStyle.copyWith(color: tertaryColor),
+                        prefixIconConstraints: BoxConstraints(
+                            maxWidth: 36, minWidth: 36, maxHeight: 36, minHeight: 36),
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Image.asset('assets/icons/search.png'),
+                        )),
+                  ),
+                ),
+              )),
+              SizedBox(
+                width: mdSpacing,
+              ),
+              Container(
+                height: 54,
+                width: 54,
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: bgSecondary,
+                ),
+                child: Center(child: Image.asset('assets/icons/filter.png')),
+              )
+            ],
+          ),
+        )
+      ],
+    ),
+  );
+}
+
+Widget packageCard(Destination package) {
+  return Container(
+    margin: EdgeInsets.symmetric(vertical: mdSpacing),
+    width: double.infinity,
+    padding: EdgeInsets.all(12),
+    decoration: BoxDecoration(color: bgElevated, borderRadius: BorderRadius.circular(12)),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            package.imageUrl!,
+            width: 64,
+          ),
+        ),
+        SizedBox(
+          width: mdSpacing,
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(package.name!,
+                style:
+                    baseTextStyle.copyWith(fontWeight: FontWeight.w600, color: primaryColor)),
+            Row(
+              children: [
+                Image.asset('assets/icons/location.png', width: 12),
+                Text(package.location!, style: smTextStyle.copyWith(color: tertaryColor))
+              ],
+            )
+          ],
+        )
+      ],
+    ),
+  );
 }
